@@ -1,37 +1,18 @@
-/**
- * React hook that is used to mark the block wrapper element.
- * It provides all the necessary props like the class name.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/packages/packages-block-editor/#useblockprops
- */
-import { useBlockProps } from '@wordpress/block-editor';
+import { InnerBlocks, useBlockProps, useInnerBlocksProps } from '@wordpress/block-editor'
 
-import { useSelect } from '@wordpress/data'
-
-/**
- * The save function defines the way in which the different attributes should
- * be combined into the final markup, which is then serialized by the block
- * editor into `post_content`.
- *
- * @see https://developer.wordpress.org/block-editor/reference-guides/block-api/block-edit-save/#save
- *
- * @return {Element} Element to render.
- */
 export default function save() {
-	const posts = useSelect( (select) => {
-		select('core').getEntityRecords( 'postType', 'post' );
-	} );
+	const blockProps = useBlockProps.save();
+	// const innerBlocksprops = useInnerBlocksProps.save();
+	const { children, innerBlocksprops } = useInnerBlocksProps.save();
 	return (
-		<p { ...useBlockProps.save() }>
-			{
-				posts && posts.length > 0 && posts.map((post) => {
-					return(
-						<div key={post.id}>
-							<h1>{post.title.rendered}</h1>
-						</div>
-					)
-				})
-			}
-		</p>
+		<div { ...blockProps }>
+			{/* <InnerBlocks.Content /> */}
+			{/* <div { ...innerBlocksprops } /> */}
+			<div {...innerBlocksprops}>
+				<h1>Inner contents are below</h1>
+				{ children }
+				<h1>This heading after inner content</h1>
+			</div>
+		</div>
 	);
 }
